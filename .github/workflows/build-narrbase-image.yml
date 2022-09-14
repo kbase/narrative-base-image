@@ -1,12 +1,14 @@
+---
 name: Build and push narrbase image
 
 on:
-  workflow_call:
-    secrets:
-      GHCR_USERNAME:
-        required: true
-      GHCR_TOKEN:
-        required: true
+  pull_request:
+    branches:
+    - main
+    types:
+    - opened
+    - synchronize
+    - ready_for_review
 
 jobs:
   docker_build_image:
