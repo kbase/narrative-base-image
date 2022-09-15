@@ -12,9 +12,7 @@ on:
 
 jobs:
   docker_build_image:
-    name: Run KBase Image Builder
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
     uses: kbase/.github/.github/workflows/reusable_build-push.yml@main
     with:
       name: '${{ github.event.repository.name }}'
