@@ -24,3 +24,11 @@ No node packages are installed (i.e. there's no `package.json` here), but the co
 Build the image with:
 `docker build -t kbase/narrative-base-image:$VERSION .`
 
+### Versioning rules
+This follows the usual symantic versioning format - vA.B.C, with the following guidelines:
+* patch versions change when one or more dependencies are updated
+* minor versions change when one or more dependencies are added or removed
+* major versions change if and when major structural changes are made. These include, but may not be limited to:
+    * adding/removing dependent languages (like if we drop R support or add Rust support)
+    * combining or creating new dependency tracking files
+    * any dependency change that may require a major update to Narrative management (i.e. including JupyterLab, base Python version change, switching from Debian to another distribution, etc.)
