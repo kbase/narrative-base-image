@@ -25,7 +25,7 @@ Build the image with:
 `docker build -t kbase/narrative-base-image:$VERSION .`
 
 ### Versioning rules
-This follows the usual symantic versioning format - vA.B.C, with the following guidelines:
+This follows the usual semantic versioning format - vA.B.C, with the following guidelines:
 * patch versions change when one or more dependencies are updated
 * minor versions change when one or more dependencies are added or removed
 * major versions change if and when major structural changes are made. These include, but may not be limited to:
