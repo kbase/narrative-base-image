@@ -28,7 +28,7 @@ pyzmq==23.1.0
 requests==2.28.1
 rsa==4.8
 semantic_version==2.10.0
-setuptools==65.3.0
+setuptools==65.4.1
 six==1.16.0
 terminado==0.15.0
 tornado==6.1
