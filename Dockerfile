@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 ENV NOTEBOOK_VERSION 6.4.12
 ENV IPYTHON_VERSION 8.5.0
