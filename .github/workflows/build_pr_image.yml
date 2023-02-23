@@ -1,14 +1,13 @@
 ---
-name: Build and push narrbase image
+name: Build and push narrative base image
 
 on:
-  pull_request:
-    branches:
-    - main
-    types:
-    - opened
-    - synchronize
-    - ready_for_review
+  workflow_call:
+    secrets:
+      GHCR_USERNAME:
+        required: true
+      GHCR_TOKEN:
+        required: true
 
 jobs:
   docker_build_image:

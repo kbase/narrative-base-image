@@ -1,0 +1,21 @@
+name: Build and Test PR Image
+
+on:
+  pull_request:
+    branches:
+    - main
+    types:
+    - opened
+    - synchronize
+    - ready_for_review
+
+jobs:
+  run_build_and_push:
+    uses: ./.github/workflows/build_pr_image.yml
+    secrets:
+      GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+
+  build_and_test_narrative_image:
+    uses: ./.github/workflows/test_pr_image.yml
+    needs: run_build_and_push
