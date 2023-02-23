@@ -34,8 +34,8 @@ jobs:
         tags: kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}
 
   test_narrative_image:
-    -
-      name: Run backend tests
+    steps:
+    - name: Run backend tests
       id: test_backend
       shell: bash -l {0}
       run: |
@@ -44,19 +44,19 @@ jobs:
         sudo chmod -R 0777 ${{ github.workspace }}/output
         docker run -v "${{ github.workspace }}/output:/tmp/output" --user nobody ${{ env.APP_IMAGE_TAG }} /bin/bash scripts/narrative_backend_tests.sh
       continue-on-error: true
-    -
-      name: Use Node JS 16
+
+    - name: Use Node JS 16
       uses: actions/setup-node@v2
       with:
         node-version: 16
-    -
-      name: Install JS dependencies
+
+    - name: Install JS dependencies
       run: |
         npm ci
         npm run install-npm
         cp src/config.json kbase-extension/static/kbase/config/
-    -
-      name: Run Narrative Frontend Unit Tests
+
+    - name: Run Narrative Frontend Unit Tests
       id: test_frontend
       shell: bash -l {0}
       run: bash scripts/run_tests.sh -u -c kbase/narrative:pr-nbi-${{ github.event.pull_request.number }}
