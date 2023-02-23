@@ -11,31 +11,56 @@ on:
 
 jobs:
   build_narrative_image:
+    runs-on: ubuntu-latest
     steps:
-    - name: Pull Narrative Repo
+    -
+      name: Pull Narrative Repo
       uses: actions/checkout@v3
       with:
         repository: kbase/narrative
-
-    - name: Add PR Image to Dockerfile FROM field
+    -
+      name: Add PR Image to Dockerfile FROM field
       run: |
         sed <Dockerfile >Dockerfile "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/"
-
-    - name: Set up Docker Buildx
+    -
+      name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-
-    - name: Build local narrative image
+    -
+      name: Build local narrative image
       uses: docker/build-action@v3
       with:
         context: .
         file: ./Dockerfile
         pull: true
-        load: true
         tags: kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}
+        outputs: type=docker,dest=/tmp/narrative_test_image.tar
+    -
+      name: Upload Image Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: narrative_test_image
+        path: /tmp/narrative_test_image.tar
 
   test_narrative_image:
+    runs-on: ubuntu-latest
+    needs: build_narrative_image
     steps:
-    - name: Run backend tests
+    -
+      name: Setup Docker buildx
+      uses: docker/setup-buildx-action@v2
+    -
+      name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: narrative_test_image
+        path: /tmp
+    -
+      name: Load Docker Image
+      run: |
+        docker load --input /tmp/narrative_test_image.tar
+        docker image ls -a
+    -
+      name: Run backend tests
       id: test_backend
       shell: bash -l {0}
       run: |
@@ -44,19 +69,19 @@ jobs:
         sudo chmod -R 0777 ${{ github.workspace }}/output
         docker run -v "${{ github.workspace }}/output:/tmp/output" --user nobody ${{ env.APP_IMAGE_TAG }} /bin/bash scripts/narrative_backend_tests.sh
       continue-on-error: true
-
-    - name: Use Node JS 16
+    -
+      name: Use Node JS 16
       uses: actions/setup-node@v2
       with:
         node-version: 16
-
-    - name: Install JS dependencies
+    -
+      name: Install JS dependencies
       run: |
         npm ci
         npm run install-npm
         cp src/config.json kbase-extension/static/kbase/config/
-
-    - name: Run Narrative Frontend Unit Tests
+    -
+      name: Run Narrative Frontend Unit Tests
       id: test_frontend
       shell: bash -l {0}
       run: bash scripts/run_tests.sh -u -c kbase/narrative:pr-nbi-${{ github.event.pull_request.number }}
