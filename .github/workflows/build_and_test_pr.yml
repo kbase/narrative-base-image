@@ -19,3 +19,6 @@ jobs:
   build_and_test_narrative_image:
     uses: ./.github/workflows/test_pr_image.yml
     needs: run_build_and_push
+    secrets:
+      GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
