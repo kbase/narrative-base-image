@@ -29,7 +29,7 @@ jobs:
     -
       name: Add PR Image to Dockerfile FROM field
       run: |
-        sed <Dockerfile >Dockerfile "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/"
+        sed -i "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/" Dockerfile
     -
       name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
