@@ -9,9 +9,9 @@ on:
       GHCR_TOKEN:
         required: true
 
+env:
+  NARRATIVE_IMG_TAG: "kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}"
 jobs:
-  env:
-    NARRATIVE_IMG_TAG: "kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}"
   build_narrative_image:
     runs-on: ubuntu-latest
     steps:
