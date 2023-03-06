@@ -30,6 +30,10 @@ jobs:
       name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     -
+      name: Cat the Dockerfile
+      run: |
+        cat Dockerfile
+    -
       name: Build local narrative image
       uses: docker/build-push-action@v3
       with:
