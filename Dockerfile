@@ -3,7 +3,7 @@ FROM python:3.10-slim-bullseye
 ENV NOTEBOOK_VERSION 6.4.12
 ENV IPYTHON_VERSION 8.5.0
 ENV IPYWIDGETS_VERSION 7.6.3
-ENV NODEJS_VERSION 16
+ENV NODEJS_VERSION 20
 
 # Install Base libraries, Node, R and Jupyter Notebook and ipywidgets from distinct channels
 ADD ./ /root/image_files
