@@ -5,12 +5,9 @@ ENV IPYTHON_VERSION 8.5.0
 ENV IPYWIDGETS_VERSION 7.6.3
 ENV NODEJS_VERSION 20
 
-# Install Base libraries, Node, R and Jupyter Notebook and ipywidgets from distinct channels
-ADD ./ /root/image_files
-RUN mkdir -p /kb/deployment/bin
-
-# A gamut of basic requirements in Debian
-RUN apt-get update && \
+RUN mkdir -p /kb/deployment/bin && \
+    # A gamut of basic requirements in Debian
+    apt-get update && \
     apt-get install -y \
     gfortran \
     gnupg \
@@ -35,7 +32,19 @@ RUN apt-get update && \
     libglpk-dev \
     glpk-doc \
     cmake \
-    r-base r-base-dev
+    r-base r-base-dev && \
+    # JavaScript needs
+    curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - && \
+    apt-get install -y nodejs && \
+    # clean the caches
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+# Install Base libraries, Node, R and Jupyter Notebook and ipywidgets from distinct channels
+ADD ./ /root/image_files
+
+# R requirements
+RUN R --vanilla < /root/image_files/install-r-packages.R
 
 # Python dependencies
 # Core Python necessities
@@ -50,13 +59,6 @@ RUN pip install -r /root/image_files/jupyter-pip-requirements.txt
 # Enable the widgets extension
 RUN jupyter nbextension enable --py widgetsnbextension
 RUN jupyter nbextension enable --py --sys-prefix clustergrammer_widget
-
-# JavaScript needs
-RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - && \
-    apt-get install -y nodejs
-
-# R requirements
-RUN R --vanilla < /root/image_files/install-r-packages.R
 
 # Install Dockerize
 RUN	curl -LJO https://github.com/kbase/dockerize/raw/master/dockerize-linux-amd64-v0.6.1.tar.gz && \
