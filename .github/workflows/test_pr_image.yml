@@ -25,7 +25,7 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
             - name: Build local narrative image
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v5
               with:
                   context: .
                   file: ./Dockerfile
