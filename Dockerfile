@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim-bookworm
 
 ENV NOTEBOOK_VERSION 6.4.12
 ENV IPYTHON_VERSION 8.5.0
@@ -21,6 +21,7 @@ RUN mkdir -p /kb/deployment/bin && \
     # for R and CRAN installations
     libxml2 \
     libxml2-dev \
+    libxslt1-dev \
     libfontconfig1-dev \
     libharfbuzz-dev \
     libfribidi-dev \
@@ -33,6 +34,11 @@ RUN mkdir -p /kb/deployment/bin && \
     glpk-doc \
     cmake \
     r-base r-base-dev && \
+    # Install Dockerize
+    curl -LJO https://github.com/kbase/dockerize/raw/master/dockerize-linux-amd64-v0.6.1.tar.gz && \
+    tar xvzf dockerize-linux-amd64-v0.6.1.tar.gz && \
+    mv dockerize /kb/deployment/bin && \
+    rm dockerize-linux-amd64-v0.6.1.tar.gz && \
     # JavaScript needs
     curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - && \
     apt-get install -y nodejs && \
@@ -69,8 +75,8 @@ RUN	curl -LJO https://github.com/kbase/dockerize/raw/master/dockerize-linux-amd6
 # The BUILD_DATE value seem to bust the docker cache when the timestamp changes, move to
 # the end
 LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.vcs-url="https://github.com/kbase/narrative-base-image.git" \
-      org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.schema-version="1.0.0-rc1" \
-      us.kbase.vcs-branch=$BRANCH \
-      maintainer="William Riehl wjriehl@lbl.gov"
+    org.label-schema.vcs-url="https://github.com/kbase/narrative-base-image.git" \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.schema-version="1.0.0-rc1" \
+    us.kbase.vcs-branch=$BRANCH \
+    maintainer="William Riehl wjriehl@lbl.gov"
