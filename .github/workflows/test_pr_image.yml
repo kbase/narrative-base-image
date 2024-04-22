@@ -2,66 +2,58 @@
 name: Test narrative base image
 
 on:
-  workflow_call:
-    secrets:
-      GHCR_USERNAME:
-        required: true
-      GHCR_TOKEN:
-        required: true
+    workflow_call:
+        secrets:
+            GHCR_USERNAME:
+                required: true
+            GHCR_TOKEN:
+                required: true
 
 env:
-  NARRATIVE_IMG_TAG: "kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}"
+    NARRATIVE_IMG_TAG: "kbase/narrative:nbi-pr-${{ github.event.pull_request.number }}"
 jobs:
-  build_narrative_image:
-    runs-on: ubuntu-latest
-    steps:
-    -
-      name: Pull Narrative Repo
-      uses: actions/checkout@v3
-      with:
-        repository: kbase/narrative
-    -
-      name: Add PR Image to Dockerfile FROM field
-      run: |
-        sed -i "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/" Dockerfile
-    -
-      name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    -
-      name: Build local narrative image
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        file: ./Dockerfile
-        pull: true
-        load: true
-        tags: ${{ env.NARRATIVE_IMG_TAG }}
-    -
-      name: Use Node JS 16
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
-    -
-      name: Install JS dependencies
-      run: |
-        npm ci
-        npm run install-npm
-        cp src/config.json kbase-extension/static/kbase/config/
-    -
-      name: Run backend tests
-      id: test_backend
-      shell: bash -l {0}
-      run: |
-        mkdir -p ${{ github.workspace }}/output
-        sudo chown nobody ${{ github.workspace }}/output
-        sudo chmod -R 0777 ${{ github.workspace }}/output
-        docker run -v "${{ github.workspace }}/output:/tmp/output" --user nobody ${{ env.NARRATIVE_IMG_TAG }} /bin/bash scripts/narrative_backend_tests.sh
-      continue-on-error: true
-    -
-      name: Run Narrative Frontend Unit Tests
-      id: test_frontend
-      shell: bash -l {0}
-      run: |
-        docker image ls -a
-        bash scripts/run_tests.sh -u -c ${{ env.NARRATIVE_IMG_TAG }}
-      continue-on-error: true
+    build_narrative_image:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Pull Narrative Repo
+              uses: actions/checkout@v3
+              with:
+                  repository: kbase/narrative
+            - name: Add PR Image to Dockerfile FROM field
+              run: |
+                  sed -i "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/" Dockerfile
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+            - name: Build local narrative image
+              uses: docker/build-push-action@v3
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  pull: true
+                  load: true
+                  tags: ${{ env.NARRATIVE_IMG_TAG }}
+            - name: Use Node JS
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 20
+            - name: Install JS dependencies
+              run: |
+                  npm ci
+                  npm run install-npm
+                  cp src/config.json kbase-extension/static/kbase/config/
+            - name: Run backend tests
+              id: test_backend
+              shell: bash -l {0}
+              run: |
+                  mkdir -p ${{ github.workspace }}/output
+                  sudo chown nobody ${{ github.workspace }}/output
+                  sudo chmod -R 0777 ${{ github.workspace }}/output
+                  docker run -v "${{ github.workspace }}/output:/tmp/output" --user nobody ${{ env.NARRATIVE_IMG_TAG }} /bin/bash scripts/narrative_backend_tests.sh
+              continue-on-error: true
+            - name: Run Narrative Frontend Unit Tests
+              id: test_frontend
+              shell: bash -l {0}
+              run: |
+                  docker image ls -a
+                  bash scripts/run_tests.sh -u -c ${{ env.NARRATIVE_IMG_TAG }}
+              continue-on-error: true
