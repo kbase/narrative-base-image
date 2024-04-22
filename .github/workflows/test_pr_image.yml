@@ -16,7 +16,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Pull Narrative Repo
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   repository: kbase/narrative
             - name: Add PR Image to Dockerfile FROM field
