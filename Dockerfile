@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.10-slim-bookworm
 
 ENV NOTEBOOK_VERSION 6.4.12
 ENV IPYTHON_VERSION 8.5.0
