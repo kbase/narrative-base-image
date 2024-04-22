@@ -23,7 +23,7 @@ jobs:
               run: |
                   sed -i "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/" Dockerfile
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
+              uses: docker/setup-buildx-action@v3
             - name: Build local narrative image
               uses: docker/build-push-action@v3
               with:
