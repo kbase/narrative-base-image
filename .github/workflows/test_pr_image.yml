@@ -16,16 +16,16 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Pull Narrative Repo
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   repository: kbase/narrative
             - name: Add PR Image to Dockerfile FROM field
               run: |
                   sed -i "s/narrative-base-image:[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}/narrative-base-image:pr-${{ github.event.pull_request.number }}/" Dockerfile
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
+              uses: docker/setup-buildx-action@v3
             - name: Build local narrative image
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v5
               with:
                   context: .
                   file: ./Dockerfile
@@ -33,7 +33,7 @@ jobs:
                   load: true
                   tags: ${{ env.NARRATIVE_IMG_TAG }}
             - name: Use Node JS
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v4
               with:
                   node-version: 20
             - name: Install JS dependencies
