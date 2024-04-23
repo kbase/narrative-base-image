@@ -1,8 +1,10 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.12-slim-bookworm
 
-ENV NOTEBOOK_VERSION 6.4.12
-ENV IPYTHON_VERSION 8.5.0
-ENV IPYWIDGETS_VERSION 7.6.3
+# These ARGs values are passed in via the docker build command
+ARG BUILD_DATE
+ARG VCS_REF
+ARG BRANCH=main
+
 ENV NODEJS_VERSION 20
 
 RUN mkdir -p /kb/deployment/bin && \
@@ -47,30 +49,10 @@ RUN mkdir -p /kb/deployment/bin && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Install Base libraries, Node, R and Jupyter Notebook and ipywidgets from distinct channels
-ADD ./ /root/image_files
+ADD ./install-r-packages.R /tmp/install-r-packages.R
 
 # R requirements
-RUN R --vanilla < /root/image_files/install-r-packages.R
-
-# Python dependencies
-# Core Python necessities
-RUN pip install -r /root/image_files/base-pip-requirements.txt
-
-# KBase scientific computing packages
-RUN pip install -r /root/image_files/kbase-pip-requirements.txt
-
-# Install Jupyter, Notebook, Ipywidgets
-RUN pip install -r /root/image_files/jupyter-pip-requirements.txt
-
-# Enable the widgets extension
-RUN jupyter nbextension enable --py widgetsnbextension
-RUN jupyter nbextension enable --py --sys-prefix clustergrammer_widget
-
-# Install Dockerize
-RUN	curl -LJO https://github.com/kbase/dockerize/raw/master/dockerize-linux-amd64-v0.6.1.tar.gz && \
-    tar xvzf dockerize-linux-amd64-v0.6.1.tar.gz && \
-    mv dockerize /kb/deployment/bin && \
-    rm dockerize-linux-amd64-v0.6.1.tar.gz
+RUN R --vanilla < /tmp/install-r-packages.R
 
 # The BUILD_DATE value seem to bust the docker cache when the timestamp changes, move to
 # the end
