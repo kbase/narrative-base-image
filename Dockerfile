@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.11-slim-bookworm
 
 # These ARGs values are passed in via the docker build command
 ARG BUILD_DATE
